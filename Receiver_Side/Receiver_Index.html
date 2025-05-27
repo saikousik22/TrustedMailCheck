@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Verifier</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --primary-color: #00bcd4; /* Cyan */
+        --secondary-color: #673ab7; /* Deep Purple */
+        --background-dark: #1a1a2e; /* Dark Blue-Purple */
+        --card-background: #16213e; /* Slightly lighter Dark Blue-Purple */
+        --text-light: #e0e0e0;
+        --text-medium: #b0b0b0;
+        --border-color: #0f3460;
+        --success-color: #4caf50;
+        --error-color: #f44336;
+        --glow-effect: 0 0 10px rgba(0, 188, 212, 0.6);
+        --input-glow: 0 0 5px rgba(0, 188, 212, 0.4);
+      }
+
+      body {
+        font-family: 'Montserrat', sans-serif;
+        background-color: var(--background-dark);
+        color: var(--text-light);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow: hidden; /* Prevent scrollbar from background animations */
+      }
+
+      /* Background animation */
+      body::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, #0f3460, #16213e, #00bcd4, #673ab7);
+        background-size: 400% 400%;
+        animation: gradientBackground 15s ease infinite;
+        z-index: -1;
+        opacity: 0.3;
+      }
+
+      @keyframes gradientBackground {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+
+      .container {
+        background-color: var(--card-background);
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        border: 1px solid var(--border-color);
+        max-width: 500px;
+        width: 100%;
+        box-sizing: border-box;
+        position: relative;
+        z-index: 1;
+        animation: fadeIn 0.8s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      h2 {
+        font-family: 'Roboto Mono', monospace;
+        color: var(--primary-color);
+        text-align: center;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: var(--glow-effect);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      h2 svg {
+        margin-right: 10px;
+        filter: drop-shadow(var(--glow-effect));
+      }
+
+      form label {
+        display: block;
+        margin-bottom: 15px;
+        color: var(--text-medium);
+        font-size: 0.95em;
+      }
+
+      form label strong {
+          color: var(--primary-color);
+          font-weight: 700;
+          margin-bottom: 8px;
+          display: block;
+      }
+
+      input[type="email"],
+      input[type="password"] {
+        width: calc(100% - 20px);
+        padding: 12px 10px;
+        margin-top: 5px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background-color: #0f1c3a;
+        color: var(--text-light);
+        font-family: 'Roboto Mono', monospace;
+        font-size: 1em;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      input[type="email"]:focus,
+      input[type="password"]:focus {
+        border-color: var(--primary-color);
+        outline: none;
+        box-shadow: var(--input-glow);
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        padding: 15px;
+        background-color: var(--primary-color);
+        color: var(--background-dark);
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1em;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        margin-top: 20px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: var(--glow-effect);
+      }
+
+      button[type="submit"]:hover {
+        background-color: #0097a7; /* Darker cyan */
+        transform: translateY(-2px);
+        box-shadow: 0 0 15px rgba(0, 188, 212, 0.8);
+      }
+
+      button[type="submit"]:active {
+        transform: translateY(0);
+      }
+
+      #result {
+        text-align: center;
+        margin-top: 25px;
+        padding: 10px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-family: 'Roboto Mono', monospace;
+        animation: messageFadeIn 0.5s ease-out;
+      }
+
+      /* Dynamic styling based on verification result */
+      #result:empty {
+        display: none; /* Hide when no text content */
+      }
+
+      #result.success {
+        background-color: rgba(76, 175, 80, 0.2); /* Light green background */
+        color: var(--success-color);
+        border: 1px solid var(--success-color);
+      }
+
+      #result.error {
+        background-color: rgba(244, 67, 54, 0.2); /* Light red background */
+        color: var(--error-color);
+        border: 1px solid var(--error-color);
+      }
+
+      #result.pending {
+        background-color: rgba(255, 193, 7, 0.2); /* Light orange background */
+        color: #ffc107; /* Orange */
+        border: 1px solid #ffc107;
+      }
+
+      @keyframes messageFadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            Verify Email Authenticity
+        </h2>
+        <form id="verifyForm">
+            <label for="email">
+              <strong>Receiver Email:</strong>
+              <input type="email" id="email" name="email" required autocomplete="email" />
+            </label>
+
+            <label for="app_password">
+              <strong>App Password:</strong>
+              <input type="password" id="app_password" name="app_password" required autocomplete="current-password" />
+            </label>
+
+            <button type="submit">Verify Emails</button>
+        </form>
+
+        <p id="result"></p>
+    </div>
+
+    <script>
+        document.getElementById("verifyForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById("email").value;
+            const app_password = document.getElementById("app_password").value;
+
+            const responseEl = document.getElementById("result");
+            responseEl.textContent = "Verifying... please wait.";
+            responseEl.className = 'pending'; // Add class for pending state
+
+            try {
+                const response = await fetch("http://127.0.0.1:3000/verify-emails", { 
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ email, app_password })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    responseEl.textContent = "Error: " + (errorData.error || "Unknown error");
+                    responseEl.className = 'error'; // Add class for error state
+                    return;
+                }
+
+                const data = await response.json();
+                responseEl.textContent = data.message;
+                responseEl.className = 'success'; // Add class for success state
+
+            } catch (err) {
+                responseEl.textContent = "Network error or server not reachable: " + err.message;
+                responseEl.className = 'error'; // Add class for network error
+            }
+        });
+    </script>
+</body>
+</html>

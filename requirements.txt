@@ -1,0 +1,7 @@
+flask
+flask-cors
+pycryptodome
+imapclient
+pyzmail36
+tk
+plyer

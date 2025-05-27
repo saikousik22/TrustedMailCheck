@@ -129,7 +129,7 @@ Receiver-side server will start. Then open `Receiver_Index.html` in your browser
 
 ## 📽️ Demo
 
-https://github.com/your-username/TrustedMailCheck/blob/main/media/demo.mp4
+https://github.com/saikousik22/TrustedMailCheck/blob/main/media/demo.mp4
 
 > 📌 Click the link above to view the project demo.
 
